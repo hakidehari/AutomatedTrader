@@ -8,6 +8,8 @@ numpy==1.21.4
     # via
     #   -r requirements.in
     #   pandas
+oandapyv20==0.7.2
+    # via -r requirements.in
 pandas==1.3.4
     # via -r requirements.in
 python-dateutil==2.8.2
