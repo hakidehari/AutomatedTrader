@@ -1,0 +1,1 @@
+pip-compile --allow-unsafe --output-file=requirements.txt requirements.in
