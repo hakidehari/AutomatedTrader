@@ -1,2 +1,0 @@
-
-TRADING_PAIRS = {"EUR/USD", "USD/EUR"}
