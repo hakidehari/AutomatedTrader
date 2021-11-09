@@ -1,7 +1,7 @@
 """
 ....„„„„¸_...…………………………._¸„„„„
-./'.……¯'*~--„…….…………...„--~*'¯…….'\
-Ì'ì\,.…_¸„--~~-„)…………… („-~~--„¸_….,/ì'Ì
+./'.……¯'*~--„…….…………...                      „--~*'¯…….'\
+Ì'ì\,.…_¸„--~~-„)……………                  („-~~--„¸_….,/ì'Ì
 ...'\¯"¯-¸: : : : : ¯"^-„¸….¸„-^"¯ : : : : :¸-¯"¯/'...
 …"-,„„¸/' : : : : : : : ¸„„-^"¯ : : : : : : : '\¸„„,-"......
 **¯¯¯'^^~-„„„----~^*'"¯ : : : : : : : : : :¸-"..........
@@ -14,10 +14,14 @@
 .:.:.: : : : :" : : : : \, . . .In . . . ,/ : : : : ": : : : :.:.:.
 : : : : : : :, : : : : :/ . . Arms. . . \: : : : : :,: : : : : :
 """
-from automated_trader.api_client.client import OANDAClient
+from automated_trader.trader.trader import AutomatedTrader
+import os
 
 
 def main():
     """Entry point for program"""
-    client = OANDAClient("oanda.cfg")
-    print(client.get_instruments())
+
+    trader = AutomatedTrader(
+        ".." + os.path.sep + "oanda.cfg", entry_point_days=55, exit_point_days=20
+    )
+    trader.run()

@@ -1,5 +1,3 @@
-from automated_trader.api_client.client import OANDAClient
-from automated_trader.data_processor.processor import TurleProcessor
 from automated_trader.trader.trader import AutomatedTrader
 
 

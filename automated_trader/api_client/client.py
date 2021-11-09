@@ -1,4 +1,5 @@
 from automated_trader.commons.logger import logger
+from automated_trader.commons.trading_utils import determine_position_sizing
 from datetime import datetime, timedelta
 import tpqoa
 
@@ -35,6 +36,8 @@ class OANDAClient:
 
 
 class StreamingClient(tpqoa.tpqoa):
+    """Streaming Client which overrides the tpqoa library for on_success and stream_data functions"""
+
     def on_success(
         self,
         time,
@@ -50,27 +53,49 @@ class StreamingClient(tpqoa.tpqoa):
         """Monitor bid price to determine if price breakout happens"""
         bid = "{:.5f}".format(bid)
         bid = float(bid)
-        logger.log(20, f"Bid price: {bid}\nPair: {pair}")
+        print(f"Bid price: {bid}\nPair: {pair}")
 
         if bid > timeframe_high:
-            self.place_long_order(pair, atr)
+            logger.log(
+                20, f"Placing long order on pairing: {pair} with volatility: {atr}"
+            )
+            self.place_long_order(pair, atr, bid)
         if bid < timeframe_low:
-            self.place_short_order(pair, atr)
+            logger.log(
+                20, f"Placing short order on pairing: {pair} with volatility: {atr}"
+            )
+            self.place_short_order(pair, atr, bid)
 
-    # TODO
-    def place_long_order(self, pair, atr):
+    def place_long_order(self, pair, atr, bid):
         """Places long order when breakout happens"""
-        account_deets = self.get_account_summary()
-        stop_loss = 2*atr
-        add_pos_condition = 0.5*atr
+        stop_loss = 2 * atr
+        account_summary = self.get_account_summary()
+        position_size = determine_position_sizing(atr, account_summary, bid)
 
-    # TODO
-    def place_short_order(self, pair, atr):
+        order_result = self.create_order(
+            instrument=pair,
+            units=position_size,
+            price=bid,
+            sl_distance=stop_loss,
+        )
+
+        logger.log(20, f"Order Placed!\nOrder Information: {order_result}")
+
+    def place_short_order(self, pair, atr, bid):
         """Places short order when breakout happens"""
-        account_deets = self.get_account_summary()
-        stop_loss = 2*atr
-        add_pos_condition = 0.5*atr
-    
+        stop_loss = 2 * atr
+        account_summary = self.get_account_summary()
+        position_size = determine_position_sizing(atr, account_summary, bid)
+
+        order_result = self.create_order(
+            instrument=pair,
+            units=-1 * position_size,
+            price=bid,
+            sl_distance=stop_loss,
+        )
+
+        logger.log(20, f"Order Placed!\nOrder Information: {order_result}")
+
     async def stream_data(
         self,
         instrument,
