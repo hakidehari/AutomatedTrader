@@ -27,7 +27,11 @@ def process_open_positions(positions: list, pair_dict: dict) -> dict:
     for position in positions:
         pair = position["instrument"]
         type_of_order = "long" if float(position["long"]["units"]) == 0.0 else "short"
-        open_position = position["long"] if float(position["long"]["units"]) == 0.0 else position["short"]
+        open_position = (
+            position["long"]
+            if float(position["long"]["units"]) == 0.0
+            else position["short"]
+        )
         price = open_position["averagePrice"]
         units = open_position["units"]
 

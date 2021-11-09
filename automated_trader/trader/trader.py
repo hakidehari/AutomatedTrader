@@ -23,7 +23,12 @@ class AutomatedTrader:
 
         # start monitor thread
         self.monitor_thread = Process(
-            target=monitor_open_positions, args=(self.client.client, self.exit_point_days, self.pair_dict,)
+            target=monitor_open_positions,
+            args=(
+                self.client.client,
+                self.exit_point_days,
+                self.pair_dict,
+            ),
         )
         self.monitor_thread.start()
 
@@ -32,7 +37,9 @@ class AutomatedTrader:
         """Checks if the time has passed 5 PM EST"""
         tz = timezone("EST")
         current_datetime = datetime.now(tz)
-        current = dt.time(current_datetime.hour, current_datetime.minute, current_datetime.second)
+        current = dt.time(
+            current_datetime.hour, current_datetime.minute, current_datetime.second
+        )
         start = dt.time(17, 0, 0)
         end = dt.time(17, 5, 0)
         return start <= current <= end
@@ -46,14 +53,23 @@ class AutomatedTrader:
                 # kill thread
                 self.monitor_thread.terminate()
                 # reprocess pairs
-                self.pair_dict = self.process_all_pairs(self.entry_point_days, self.exit_point_days)
+                self.pair_dict = self.process_all_pairs(
+                    self.entry_point_days, self.exit_point_days
+                )
                 # restart thread
                 self.monitor_thread = Process(
-                    target=monitor_open_positions, args=(self.client.client, self.exit_point_days, self.pair_dict,)
+                    target=monitor_open_positions,
+                    args=(
+                        self.client.client,
+                        self.exit_point_days,
+                        self.pair_dict,
+                    ),
                 )
                 self.monitor_thread.start()
-                logger.log(20, f"Reprocessing Pair dictionary values: \n{self.pair_dict}")
-            
+                logger.log(
+                    20, f"Reprocessing Pair dictionary values: \n{self.pair_dict}"
+                )
+
             for pair in self.pair_dict:
                 asyncio.run(
                     self.streaming_client.stream_data(

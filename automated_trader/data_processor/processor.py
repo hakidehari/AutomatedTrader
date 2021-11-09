@@ -21,7 +21,6 @@ class TurtleProcessor:
 
         return timeframe_high, timeframe_low
 
-
     def analyze_turtle_conditions(self) -> tuple:
         """Check if any turtle conditions are met
         returns:
@@ -52,6 +51,14 @@ class TurtleProcessor:
         atr = true_range.rolling(20).sum() / 20
         atr = atr.iloc[len(atr) - 1 : len(atr)]
 
-        timeframe_exit_low, timeframe_exit_high = self.get_exit_price_conditions(highs, lows)
+        timeframe_exit_low, timeframe_exit_high = self.get_exit_price_conditions(
+            highs, lows
+        )
 
-        return timeframe_high, timeframe_low, timeframe_exit_low, timeframe_exit_high, atr.iloc[0]
+        return (
+            timeframe_high,
+            timeframe_low,
+            timeframe_exit_low,
+            timeframe_exit_high,
+            atr.iloc[0],
+        )
