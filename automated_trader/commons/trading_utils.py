@@ -16,8 +16,13 @@ def determine_position_sizing(atr: float, account_details: dict, bid: float):
 
 def get_open_positions(client: tpqoa.tpqoa):
     """Retrieves all open positions"""
-    positions = client.get_positions()
-    return positions
+    try:
+        positions = client.get_positions()
+        return positions
+    except Exception as e:
+        print(e)
+        raise ConnectionAbortedError("Failed to get open positions due to a connection error")
+
 
 
 def process_open_positions(

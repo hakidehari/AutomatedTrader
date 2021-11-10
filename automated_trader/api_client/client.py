@@ -161,26 +161,32 @@ class StreamingClient(OANDAClient):
         print(f"Bid price: {bid}\nPair: {pair}")
 
         if bid > timeframe_high:
-            if self.check_if_position_exists(pair):
-                logger.log(
-                    20, f"position already exists for pairing {pair}. Skipping..."
-                )
-            else:
-                logger.log(
-                    20, f"Placing long order on pairing: {pair} with volatility: {atr}"
-                )
-                self.place_long_order(pair, atr, bid)
+            try:
+                if self.check_if_position_exists(pair):
+                    logger.log(
+                        20, f"position already exists for pairing {pair}. Skipping..."
+                    )
+                else:
+                    logger.log(
+                        20, f"Placing long order on pairing: {pair} with volatility: {atr}"
+                    )
+                    self.place_long_order(pair, atr, bid)
+            except ConnectionAbortedError as e:
+                logger.exception(str(e))
 
         if bid < timeframe_low:
-            if self.check_if_position_exists(pair):
-                logger.log(
-                    20, f"position already exists for pairing {pair}. Skipping..."
-                )
-            else:
-                logger.log(
-                    20, f"Placing short order on pairing: {pair} with volatility: {atr}"
-                )
-                self.place_short_order(pair, atr, bid)
+            try:
+                if self.check_if_position_exists(pair):
+                    logger.log(
+                        20, f"position already exists for pairing {pair}. Skipping..."
+                    )
+                else:
+                    logger.log(
+                        20, f"Placing short order on pairing: {pair} with volatility: {atr}"
+                    )
+                    self.place_short_order(pair, atr, bid)
+            except ConnectionAbortedError as e:
+                logger.exception(str(e))
 
     def place_long_order(self, pair, atr, bid):
         """Places long order when breakout happens"""
