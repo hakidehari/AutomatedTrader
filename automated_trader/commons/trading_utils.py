@@ -22,21 +22,22 @@ def get_open_positions(client: tpqoa.tpqoa):
 
 
 # TODO have to process open positions for exit conditions
-def process_open_positions(positions: list, pair_dict: dict) -> dict:
+def process_open_positions(client: tpqoa.tpqoa, positions: list, pair_dict: dict, exit_point_days: int) -> dict:
     """Processes the open position based on turtle criteria"""
     for position in positions:
         pair = position["instrument"]
         type_of_order = "long" if float(position["long"]["units"]) == 0.0 else "short"
         open_position = (
             position["long"]
-            if float(position["long"]["units"]) == 0.0
+            if float(position["long"]["units"]) != 0.0
             else position["short"]
         )
         price = open_position["averagePrice"]
         units = open_position["units"]
 
         if type_of_order == "long":
-            pass
+            if price < pair_dict[pair]["timeframe_exit_low"]:
+                pass
         else:
             pass
 
@@ -47,7 +48,7 @@ def monitor_open_positions(client: tpqoa.tpqoa, exit_point_days: int, pair_dict:
     while 1:
         print("Processing open Positions for any exit criteria...")
         positions = get_open_positions(client)
-        positions_to_close = process_open_positions(positions, pair_dict)
+        positions_to_close = process_open_positions(client, positions, pair_dict, exit_point_days)
 
         # add logic for closing positions under here
 

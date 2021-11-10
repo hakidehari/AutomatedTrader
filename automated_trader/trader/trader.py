@@ -7,7 +7,6 @@ from pytz import timezone
 from multiprocessing import Process
 import asyncio
 import datetime as dt
-import multiprocessing as mp
 
 
 class AutomatedTrader:
