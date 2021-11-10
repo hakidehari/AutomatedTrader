@@ -24,7 +24,7 @@ class AutomatedTrader:
         self.monitor_thread = Process(
             target=monitor_open_positions,
             args=(
-                self.client.client,
+                self.client,
                 self.exit_point_days,
                 self.pair_dict,
             ),

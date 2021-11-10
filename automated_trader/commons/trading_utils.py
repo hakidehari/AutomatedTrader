@@ -17,40 +17,58 @@ def determine_position_sizing(atr: float, account_details: dict, bid: float):
 def get_open_positions(client: tpqoa.tpqoa):
     """Retrieves all open positions"""
     positions = client.get_positions()
-    logger.log(20, f"Positions: \n{positions}")
     return positions
 
 
-# TODO have to process open positions for exit conditions
-def process_open_positions(client: tpqoa.tpqoa, positions: list, pair_dict: dict, exit_point_days: int) -> dict:
-    """Processes the open position based on turtle criteria"""
+def process_open_positions(
+    client: tpqoa.tpqoa, positions: list, pair_dict: dict, exit_point_days: int
+) -> dict:
+    """Processes the open position based on turtle criteria and closes them should the exit criteria be met"""
+    # iterate over all positions
     for position in positions:
         pair = position["instrument"]
-        type_of_order = "long" if float(position["long"]["units"]) == 0.0 else "short"
-        open_position = (
-            position["long"]
-            if float(position["long"]["units"]) != 0.0
-            else position["short"]
-        )
+        timeframe_exit_low = pair_dict[pair]["timeframe_exit_low"]
+        timeframe_exit_high = pair_dict[pair]["timeframe_exit_high"]
+
+        type_of_order = "long" if float(position["long"]["units"]) != 0.0 else "short"
+
+        print(f"TYPE OF POSITION: {type_of_order}")
+
+        open_position = position[type_of_order]
+
         price = open_position["averagePrice"]
-        units = open_position["units"]
+        units = float(open_position["units"])
 
         if type_of_order == "long":
-            if price < pair_dict[pair]["timeframe_exit_low"]:
-                pass
+            if price < timeframe_exit_low:
+                order_result = client.create_order(
+                    instrument=pair,
+                    units=-1 * units,
+                    ret=True,
+                )
+                logger.log(
+                    20,
+                    f"Position closed because exit criteria met for position.  For this long position, {timeframe_exit_low} is the {exit_point_days} day low.\nPosition:\n{position}\nClose Response:\n{order_result}",
+                )
         else:
-            pass
+            if price > timeframe_exit_high:
+                order_result = client.create_order(
+                    instrument=pair,
+                    units=-1 * units,
+                    ret=True,
+                )
+                logger.log(
+                    20,
+                    f"Position closed because exit criteria met for position.  For this short position, {timeframe_exit_high} is the {exit_point_days} High.\nPosition:\n{position}\nClose Response:\n{order_result}",
+                )
 
 
-# TODO build out position monitor and functionality
 def monitor_open_positions(client: tpqoa.tpqoa, exit_point_days: int, pair_dict: dict):
     """Constantly monitors open positions"""
     while 1:
         print("Processing open Positions for any exit criteria...")
         positions = get_open_positions(client)
-        positions_to_close = process_open_positions(client, positions, pair_dict, exit_point_days)
+        process_open_positions(client, positions, pair_dict, exit_point_days)
 
-        # add logic for closing positions under here
-
-        # sleep timer of 20 seconds
+        # sleep timer of 1 second
         time.sleep(1)
