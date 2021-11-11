@@ -8,7 +8,7 @@ def determine_position_sizing(atr: float, account_details: dict, bid: float):
     """Determines a trade position size
     Units = 1% of Account / Market Dollar Volatility
     """
-    one_percent_balance = 0.01 * float(account_details["balance"])
+    one_percent_balance = 0.25 * float(account_details["balance"])
     dollar_volatility = atr * bid
     position_size = one_percent_balance / dollar_volatility
     return math.floor(position_size)
