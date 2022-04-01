@@ -9,6 +9,8 @@ def main():
     """Entry point for program"""
 
     trader = AutomatedTrader(
-        ".." + os.path.sep + "oanda.cfg", entry_point_days=55, exit_point_days=20
+        os.getcwd() + os.path.sep + "oanda.cfg",
+        entry_point_days=70,
+        exit_point_days=8,
     )
     trader.run()

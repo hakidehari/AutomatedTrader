@@ -1,2 +1,3 @@
 include versioneer.py
 include automated_trader/_version.py
+include automated_trader/oanda.cfg

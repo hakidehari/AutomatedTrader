@@ -168,7 +168,8 @@ class StreamingClient(OANDAClient):
                     )
                 else:
                     logger.log(
-                        20, f"Placing long order on pairing: {pair} with volatility: {atr}"
+                        20,
+                        f"Placing long order on pairing: {pair} with volatility: {atr}",
                     )
                     self.place_long_order(pair, atr, bid)
             except ConnectionAbortedError as e:
@@ -182,7 +183,8 @@ class StreamingClient(OANDAClient):
                     )
                 else:
                     logger.log(
-                        20, f"Placing short order on pairing: {pair} with volatility: {atr}"
+                        20,
+                        f"Placing short order on pairing: {pair} with volatility: {atr}",
                     )
                     self.place_short_order(pair, atr, bid)
             except ConnectionAbortedError as e:

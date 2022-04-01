@@ -21,8 +21,9 @@ def get_open_positions(client: tpqoa.tpqoa):
         return positions
     except Exception as e:
         print(e)
-        raise ConnectionAbortedError("Failed to get open positions due to a connection error")
-
+        raise ConnectionAbortedError(
+            "Failed to get open positions due to a connection error"
+        )
 
 
 def process_open_positions(
